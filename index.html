@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>ЕБУЧИЙ WEBSOCKET</title>
+  </head>
+  <body>
+    <script>
+        let socket = new WebSocket("ws://localhost:8080/ws")
+        console.log("attempting websocket connection")
+
+        socket.onopen = () => {
+            console.log("successfully connected")
+            socket.send("Hi From The Client!")
+        }
+
+        socket.onclose = (event) => {
+            console.log("socket close connection: ", event)
+        }
+
+        socket.onerror = (error) => {
+            console.log("socket error: ", error)
+        }
+    </script>
+
+    <main>
+        <h1>ЕБУЧИЙ WEBSOCKET</h1>  
+    </main>
+  </body>
+</html>
