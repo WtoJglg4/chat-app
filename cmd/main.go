@@ -38,7 +38,6 @@ func wsEndpoint(w http.ResponseWriter, r *http.Request, hub *models.Hub) {
 		log.Panicln("upgrade: ", err)
 		return
 	}
-	defer ws.Close()
 
 	log.Println("client successfully connected...")
 	// client := models.NewClient(hub, ws, make(chan []byte))
@@ -48,29 +47,10 @@ func wsEndpoint(w http.ResponseWriter, r *http.Request, hub *models.Hub) {
 		Send: make(chan []byte),
 	}
 	hub.Register(client)
-	// client.Hub.SendAll(read(ws))
 
-	// _, msg, err := client.Conn.ReadMessage()
-	// if err != nil {
-	// 	log.Printf("wsEndpoint: err: %v\n", err)
-	// }
-	// log.Printf("msg: %v\n", string(msg))
-
-	//ReadPump почему то закрывает соединение
 	go client.ReadPump()
 	go client.WritePump()
 }
-
-// func read(ws *ws.Conn) []byte {
-
-// 	_, byteMsg, err := ws.ReadMessage()
-// 	if err != nil {
-// 		log.Println("read websocket:", err)
-// 		return nil
-// 	}
-
-// 	return byteMsg
-// }
 
 func setUpRoutes(hub *models.Hub) {
 	http.HandleFunc("/", homePage)
