@@ -33,15 +33,9 @@ func (c *Client) ReadPump() {
 	}()
 
 	c.Conn.SetReadLimit(maxMessageSize)
-	// c.Conn.SetReadDeadline(time.Now().Add(pongWait))
-	// c.Conn.SetPongHandler(func(string) error { c.Conn.SetReadDeadline(time.Now().Add(pongWait)); return nil })
+	c.Conn.SetReadDeadline(time.Now().Add(pongWait))
+	c.Conn.SetPongHandler(func(string) error { c.Conn.SetReadDeadline(time.Now().Add(pongWait)); return nil })
 	for {
-		//тут должен быть анмаршал
-		//далее броадкаст хабом структуры Message (а не []byte) по всем клиентам
-		//хотя может и не надо(есть смысл анмаршалить на стороне клиента при выводе сообщения на экран)
-		// msg := Message{}
-		// err := c.Conn.ReadJSON(&msg)
-
 		_, msg, err := c.Conn.ReadMessage()
 		if err != nil {
 			if ws.IsUnexpectedCloseError(err, ws.CloseGoingAway, ws.CloseAbnormalClosure) {

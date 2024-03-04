@@ -51,12 +51,12 @@
 			console.log("Data received: " + event.data);
 
 			// Распарсить JSON данные от сервера
-			// var data = JSON.parse(event.data);
-			// var author = data.author;
-			// var message = data.body;
+			var data = JSON.parse(event.data);
+			var author = data.author;
+			var message = data.body;
 
-			// // Вызов функции displayMessage с полученными данными
-			// displayMessage(author, message);
+			// Вызов функции displayMessage с полученными данными
+			displayMessage(author, message);
 		};
 
 		socket.onerror = function(error) {
