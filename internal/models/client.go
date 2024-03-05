@@ -19,10 +19,10 @@ var (
 )
 
 type Client struct {
-	Hub  *Hub
-	Conn *ws.Conn
-	Send chan []byte
-	Name string
+	Hub      *Hub
+	Conn     *ws.Conn
+	Send     chan []byte
+	Username string
 }
 
 // conn -> hub в goroutine

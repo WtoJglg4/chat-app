@@ -28,7 +28,6 @@ func (hub *Hub) Unregister(client *Client) {
 
 func (hub *Hub) SendAll(msg []byte) {
 	hub.broadcast <- msg
-	log.Printf("client sent to all: `%s`", string(msg))
 }
 
 func (hub *Hub) Run() {
@@ -36,17 +35,17 @@ func (hub *Hub) Run() {
 		select {
 		case client := <-hub.register:
 			hub.clients[client] = struct{}{}
-			log.Printf("hub: register: %v\n", client.Name)
+			log.Printf("hub: register: %v\n", client.Username)
 		case client := <-hub.unregister:
 			delete(hub.clients, client)
 			close(client.Send)
-			log.Printf("hub: unregister: %v\n", client.Name)
+			log.Printf("hub: unregister: %v\n", client.Username)
 		case msg := <-hub.broadcast:
 			for client := range hub.clients {
 				select {
 				case client.Send <- msg:
 				default:
-					log.Printf("hub: client %v is inactive\n", client.Name)
+					log.Printf("hub: client %v is inactive\n", client.Username)
 					delete(hub.clients, client)
 					close(client.Send)
 				}
