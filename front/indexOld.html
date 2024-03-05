@@ -3,8 +3,7 @@
 <html>
 <head>
 	<meta charset="UTF-8" />
-	<title>ЕБУЧИЙ WEBSOCKET</title>
-	<!-- <link rel="icon" href="/favicon.ico" type="image/x-icon"> -->
+	<title>Chat</title>
 </head>
 
 <body>
@@ -12,6 +11,7 @@
 		var socket = new WebSocket("ws://" + location.host + "/ws");
 		socket.onopen = function() {
 			console.log("Connection successfull.");
+			displayMessage()
 
 			// Функция для отправки данных в формате JSON
 			function sendMessage() {

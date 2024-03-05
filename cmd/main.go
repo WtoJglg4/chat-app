@@ -27,7 +27,17 @@ func homePage(w http.ResponseWriter, r *http.Request) {
 	}
 
 	log.Println("serving html...")
-	http.ServeFile(w, r, "../index.html")
+	http.ServeFile(w, r, "front/index.html")
+}
+
+func styles(w http.ResponseWriter, r *http.Request) {
+	log.Println(r.URL.Path)
+	http.ServeFile(w, r, "front/styles.css")
+}
+
+func script(w http.ResponseWriter, r *http.Request) {
+	log.Println(r.URL.Path)
+	http.ServeFile(w, r, "front/script.js")
 }
 
 func wsEndpoint(w http.ResponseWriter, r *http.Request, hub *models.Hub) {
@@ -40,7 +50,6 @@ func wsEndpoint(w http.ResponseWriter, r *http.Request, hub *models.Hub) {
 	}
 
 	log.Println("client successfully connected...")
-	// client := models.NewClient(hub, ws, make(chan []byte))
 	client := &models.Client{
 		Hub:  hub,
 		Conn: ws,
@@ -54,6 +63,8 @@ func wsEndpoint(w http.ResponseWriter, r *http.Request, hub *models.Hub) {
 
 func setUpRoutes(hub *models.Hub) {
 	http.HandleFunc("/", homePage)
+	http.HandleFunc("/front/styles.css", styles)
+	http.HandleFunc("/front/script.js", script)
 	http.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
 		wsEndpoint(w, r, hub)
 	})
@@ -63,11 +74,13 @@ func main() {
 	hub := models.NewHub()
 	go hub.Run()
 
+	serverAddr := "localhost:8080"
+
 	server := http.Server{
-		Addr:              "192.168.31.118:8080",
+		Addr:              serverAddr,
 		ReadHeaderTimeout: 3 * time.Second,
 	}
 	setUpRoutes(hub)
-	log.Println("server starts...")
+	log.Println("server starts on " + serverAddr)
 	log.Fatal(server.ListenAndServe())
 }
