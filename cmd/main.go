@@ -9,9 +9,21 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
+
+	"github.com/spf13/viper"
 )
 
+func initConfig() error {
+	viper.AddConfigPath("configs")
+	viper.SetConfigName("config")
+	return viper.ReadInConfig()
+}
+
 func main() {
+	if err := initConfig(); err != nil {
+		log.Fatalf("error initializing configs: %s\n", err.Error())
+	}
+
 	hub := models.NewHub()
 	go hub.Run()
 
@@ -19,10 +31,11 @@ func main() {
 	handler := handlers.NewHandler(service, hub)
 	srv := new(server.Server)
 	go func() {
-		if err := srv.Run("8080", handler.InitRoutes()); err != nil {
+		if err := srv.Run(viper.GetString("port"), handler.InitRoutes()); err != nil {
 			log.Printf("server error: %v\n", err)
 		}
 	}()
+	log.Printf("server started on port: %s\n", viper.GetString("port"))
 
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, syscall.SIGTERM, syscall.SIGINT)
