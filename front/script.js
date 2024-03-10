@@ -2,7 +2,7 @@ const chatbox = document.getElementById("chatbox");
 const messageInput = document.getElementById("messageInput");
 const sendButton = document.getElementById("sendButton");
 
-const socket = new WebSocket("ws://localhost:8080/ws"); // Change the URL to your server's WebSocket URL
+const socket = new WebSocket("ws://localhost:8080/chat/ws");
 
 socket.onopen = function () {
     console.log("Connected to the server.");
@@ -13,11 +13,11 @@ socket.onmessage = function(event) {
 
     // Распарсить JSON данные от сервера
     var message = JSON.parse(event.data);
-    var author = data.author;
-    var message = data.body;
+    var author = message.author;
+    var body = message.body;
 
     // Вызов функции displayMessage с полученными данными
-    displayMessage(author, message);
+    displayMessage(author, body);
 };
 
 socket.onerror = function(error) {
@@ -41,11 +41,12 @@ sendButton.addEventListener("click", function () {
     }
 });
 
-// Обработчик клика на кнопку Send
-document.getElementById("sendButton").addEventListener("click", function(event) {
-    event.preventDefault();
-    sendMessage();
-});
+messageInput.addEventListener("keypress", function(event){
+    var key = event.key 
+    if (key === "Enter"){
+        sendButton.click()
+    }
+})
 
 function sendMessage(message) {
     const messageObj = {
@@ -55,10 +56,13 @@ function sendMessage(message) {
     socket.send(JSON.stringify(messageObj));
 }
 
-function displayMessage(message) {
+function displayMessage(author, body) {
     const messageElement = document.createElement("div");
     messageElement.classList.add("message");
-    messageElement.innerHTML = `<span class="user">${message.author}:</span> ${message.body}`;
+    messageElement.innerHTML = `<span class="user">${author}:</span> ${body}`;
+
+    console.log("displayed: " + author + " " + body)
+
     chatbox.appendChild(messageElement);
     chatbox.scrollTop = chatbox.scrollHeight;
 }
