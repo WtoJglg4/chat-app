@@ -10,5 +10,3 @@ type Repository struct {
 	Authorization
 	Chat
 }
-
-func NewRepository()
